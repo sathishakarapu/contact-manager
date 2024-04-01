@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const auth = require('./middlewares/auth');
+const contactRoutes = require('./routes/contactRoutes');
 require("dotenv").config({path:"./config/config.env"});
 const cors = require('cors');
 
@@ -17,6 +18,10 @@ app.get('/protected',auth,(req,res) => {
     res.status(200).json({user:req.user});
 });
 app.use('/', require('./routes/auth'));
+
+// Routes
+app.use('/contacts', contactRoutes);
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, async () => {
