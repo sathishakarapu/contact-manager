@@ -1,16 +1,16 @@
-import {React, useState} from 'react';
+import { React, useState } from 'react';
 import styled from 'styled-components';
-import img from '../components/Images/Shape.png';
-import {Link,useNavigate} from 'react-router-dom';
+import img from '../components/Images/shape.png';
+import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 
 const Container = styled.div`
-    width:1728px;
-    height:1117px;
-    border:1px solid black;
+    width: 1728px;
+    height: 1117px;
+    border: 1px solid black;
     overflow: hidden;
     background: #FFFFFF;
 `;
@@ -205,48 +205,49 @@ const T2 = styled.div`
 const Login = () => {
 
     const navigate = useNavigate();
-    const [email,setEmail] = useState('')
-    const [password,setPassword] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-    
+
         if (!email || !password) {
             toast.error("Please enter all the required fields!");
             return;
         }
-    
+
         try {
             const response = await axios.post('http://localhost:8080/login', {
                 email: email,
                 password: password
             });
-    
+
             // If the request is successful (status code 2xx)
             if (response.status >= 200 && response.status < 300) {
-                console.log('Login successful');
-                navigate('/dashboard'); // Redirect to dashboard after successful login
+                console.log('Login Successful');
+                // Set token in response cookie
+                document.cookie = `token=${response.data.token}; path=/;`;
+                navigate('/home'); // Redirect to home after successful login
             } else {
                 // If the request is not successful (status code is not 2xx)
                 throw new Error('Login failed with status code ' + response.status);
             }
         } catch (error) {
             console.error("Error:", error.message);
-            toast.error("Failed to login. Please try again later.");
+            toast.error("User not Found!");
         }
-    }    
-    
+    }
 
 
-  return (
-    <>
-    <ToastContainer autoClose={2000}/>
-        <Container>
-            <Background>
-                <Ellipse1/>
-                <Ellipse2/>
-                <LoginContainer>
-                </LoginContainer>
+    return (
+        <>
+            <ToastContainer autoClose={2000} />
+            <Container>
+                <Background>
+                    <Ellipse1 />
+                    <Ellipse2 />
+                    <LoginContainer>
+                    </LoginContainer>
                     <EllipseContainer1>
                         {[...Array(42)].map((_, index) => (
                             <Ellipse key={index} />
@@ -258,29 +259,29 @@ const Login = () => {
                         ))}
                     </EllipseContainer2>
                     <Logo>Logo</Logo>
-                    <InnerContainer/>
+                    <InnerContainer />
                     <Text>
                         Enter your credentials to access your account
                     </Text>
                     <form onSubmit={handleSubmit}>
-                    <Input1 placeholder='User ID' required
-                        type='email' value={email} 
-                        name='email' onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Input2 placeholder='Password' required
-                        value={password} 
-                        name='password' type='password' onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <Shape src={img} alt='shape'/>
-                    <Rectangle/>
-                    <T1 type='submit' value='login'>Sign In</T1>
+                        <Input1 placeholder='User ID' required
+                            type='email' value={email}
+                            name='email' onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <Input2 placeholder='Password' required
+                            value={password}
+                            name='password' type='password' onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <Shape src={img} alt='shape' />
+                        <Rectangle />
+                        <T1 type='submit' value='login'>Sign In</T1>
                     </form>
 
-                    <T2>Dont, have an account ? <Link to="/signup" style={{color:'#7D8CC4'}}>Sign Up</Link></T2>
-            </Background>
-        </Container>
-    </>
-  )
+                    <T2>Dont, have an account ? <Link to="/signup" style={{ color: '#7D8CC4' }}>Sign Up</Link></T2>
+                </Background>
+            </Container>
+        </>
+    )
 }
 
 export default Login
