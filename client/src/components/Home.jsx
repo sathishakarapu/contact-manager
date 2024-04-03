@@ -7,14 +7,7 @@ import img1 from '../components//Images/vector.png';
 import img2 from '../components/Images/group.png';
 import img3 from '../components/Images/search.png';
 import img4 from '../components/Images/profile.png';
-// import img5 from '../components/Images/date.png';
-import img6 from '../components/Images/filter.png';
-import img7 from '../components/Images/delete.png';
-import img8 from '../components/Images/import.png';
-import img9 from '../components/Images/export.png';
-import Modal from 'react-modal';
 import Contacts from './Contacts';
-Modal.setAppElement(document.body);
 
 const Container = styled.div`
     width: 1728px;
@@ -235,135 +228,7 @@ const Body = styled.div`
     overflow-y: scroll;
     scroll-behavior: smooth;
 `
-const SelectDate = styled.input`
-    width: 150px;
-    height: 40px;
-    top: 26px;
-    left: 34px;
-    border-radius: 10px;
-    position: absolute;
-    border: 2px solid #7D7D7D;
-    font-family: Titillium Web,sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 30.42px;
-    text-align: left;
-    background: #FFFFFF;
-    cursor: pointer;
-`
 
-const Option = styled.option`
-    font-family: Titillium Web,sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    line-height: 30.42px;
-    text-align: center;
-`
-const Filter = styled.select`
-    width: 170px;
-    height: 40px;
-    top: 26px;
-    left: 220px;
-    border-radius: 10px;
-    border: 2px solid #7D7D7D;
-    position: absolute;
-    padding-left:30px;
-    font-family: Titillium Web,sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27.38px;
-    text-align: left;
-    color: #000000;
-    background: #FFFFFF;
-`
-const FilterLogo = styled.img`
-    width: 18px;
-    height: 12px;
-    top: 40px;
-    left: 230px;
-    gap: 0px;
-    opacity: 0px;
-    color: black;
-    position: absolute;
-`
-const Delete = styled.button`
-    width: 139px;
-    height: 41px;
-    top: 26px;
-    left: 970px;
-    border-radius: 10px;
-    font-family: Titillium Web,sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27.38px;
-    text-align: left;
-    color: #000000;
-    position: absolute;
-    padding-left: 50px;
-    background: #FFFFFF;
-    border: 2px solid #7D7D7D;
-    cursor: pointer;
-`
-const DeleteImg = styled.img`
-    width: 15px;
-    height: 16px;
-    top: 38px;
-    left: 990px;
-    position: absolute;
-    cursor: pointer;
-`
-const ImportImg = styled.img`
-    width: 14.3px;
-    height: 17.56px;
-    top: 38px;
-    left: 1150px;
-    position: absolute;
-    cursor: pointer;
-`
-const ExportImg = styled.img`
-    width: 16px;
-    height: 16px;
-    top: 38px;
-    left: 1300px;
-    position: absolute;
-    cursor: pointer;
-`
-const Import = styled.button`
-    width: 141px;
-    height: 41px;
-    top: 26px;
-    left: 1125px;
-    border-radius: 10px;
-    font-family: Titillium Web,sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27.38px;
-    text-align: left;
-    color: #000000;
-    position: absolute;
-    border: 2px solid #7D7D7D;
-    padding-left: 50px;
-    background: #FFFFFF;
-    cursor: pointer;
-`
-const Export = styled.button`
-    width: 139px;
-    height: 41px;
-    top: 26px;
-    left: 1280px;
-    border-radius: 10px;
-    font-family: Titillium Web,sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27.38px;
-    border: 2px solid #7D7D7D;
-    text-align: left;
-    color: #000000;
-    position: absolute;
-    padding-left: 50px;
-    background: #FFFFFF;
-    cursor: pointer;
-`
 const ContactsContainer = styled.div`
   margin-top: 90px;
 `;
@@ -372,7 +237,7 @@ const Home = () => {
 
     const [user, setUser] = useState();
     const navigate = useNavigate();
-    const [modalIsOpen, setModalIsOpen] = useState(false);
+    // const [modalIsOpen, setModalIsOpen] = useState(false);
 
 
     useEffect(() => {
@@ -401,42 +266,6 @@ const Home = () => {
         }
     }, [navigate]);
 
-    const handleImport = () => {
-        setModalIsOpen(true);
-    };
-
-    const handleModalClose = () => {
-        setModalIsOpen(false);
-    };
-
-    const handleDragOver = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-    };
-
-    const handleFileUpload = (file) => {
-        const formData = new FormData();
-        formData.append('csvFile', file);
-    
-        axios.post('http://localhost:8080/importContacts', formData)
-    .then(response => {
-        console.log(response.data);
-        alert('Contacts imported successfully');
-        setModalIsOpen(false);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error importing contacts');
-    });
-    };
-
-    const handleDrop = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        const file = event.dataTransfer.files[0];
-        handleFileUpload(file);
-    };
-
     const handleLogout = () => {
         // Clear authentication token and log out
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -451,47 +280,7 @@ const Home = () => {
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     };
-
-    const handleExportContacts = async () => {
-        // Display a confirmation dialog before exporting contacts
-        const confirmed = window.confirm('Are you sure you want to export contacts?');
     
-        // Check if user confirmed the action
-        if (!confirmed) {
-            // User canceled the action
-            return;
-        }
-    
-        try {
-            const response = await axios.get('http://localhost:8080/exportContacts', {
-                responseType: 'blob' // Important to receive file as blob
-            });
-    
-            // Create a Blob from the response data
-            const blob = new Blob([response.data], { type: 'text/csv' });
-    
-            // Create a URL for the Blob
-            const url = window.URL.createObjectURL(blob);
-    
-            // Create a link element to trigger the download
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', 'contacts.csv'); // Specify the filename
-            document.body.appendChild(link);
-    
-            // Trigger the download
-            link.click();
-    
-            // Cleanup
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            alert('Contacts exported successfully!');
-        } catch (error) {
-            console.error('Error exporting contacts:', error);
-            // Handle error
-        }
-    };    
-
   return (
     <>
       <Container>
@@ -516,58 +305,8 @@ const Home = () => {
             <SubName>Super Admin</SubName>
         </NavBar>
         <Body>
-            <SelectDate type="date" placeholder='Select Date'></SelectDate>
-            <Filter >
-                <Option value="all">All</Option>
-                <Option value="designation">By Designation</Option>
-                <Option value="company">By Company</Option>
-                <Option value="name">By Name</Option>
-                <Option value="industry">By Industry</Option>
-                <Option value="country">By Country</Option>
-            </Filter>
-            <FilterLogo src={img6} alt='filter'/>
-            <Delete>Delete</Delete>
-            <Import onClick={handleImport}>Import</Import>
-            <div>
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={handleModalClose}
-                contentLabel="Upload Modal"
-                style={{
-                    content: {
-                        width: '21%',
-                        height: '21%', 
-                        margin: 'auto'
-                    }
-                }}
-            >
-                <div
-                    style={{ width: '95%', height: '75%', border: '2px dashed #ccc', textAlign: 'center', lineHeight: '200px' }}
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                >
-                    <h2>Drop and Drag to Upload File</h2>
-                </div>
-                <button onClick={handleModalClose} style={{
-                    backgroundColor: '#0884FF',
-                    border: 'none',
-                    color: 'white',
-                    padding: '15px 32px',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    display: 'inline-block',
-                    fontSize: '16px',
-                    margin: '5px 200px',
-                    cursor: 'pointer',
-                }}>Cancel</button>
-            </Modal>
-            </div>
-            <Export onClick={handleExportContacts}>Export</Export>
-            <DeleteImg src={img7} alt='delete'/>
-            <ImportImg src={img8} alt='import'/>
-            <ExportImg  onClick={handleExportContacts} src={img9} alt='export'/>
             <ContactsContainer>
-            <Contacts user={user} onImport={handleImport}/>
+            <Contacts />
             </ContactsContainer>
         </Body>
       </Container>

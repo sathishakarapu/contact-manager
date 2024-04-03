@@ -6,7 +6,6 @@ const fs = require('fs');
 const multer = require('multer');
 const csv = require('csv-parser');
 const ContactsModel = require("../models/Contact");
-const path = require('path');
 
 router.post("/signup", async (req, res) => {
     const { email, password, confirmPassword } = req.body;
@@ -216,6 +215,18 @@ router.get('/exportContacts', async (req, res) => {
     } catch (error) {
         console.error('Error exporting contacts:', error);
         res.status(500).json({ error: 'Error exporting contacts' });
+    }
+});
+
+router.delete('/deleteContacts/:id', async (req, res) => {
+    try {
+        const deletedContact = await ContactsModel.findByIdAndDelete(req.params.id);
+        if (!deletedContact) {
+            return res.status(404).json({ message: 'Contact not found' });
+        }
+        res.status(200).json({ message: 'Contact deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
