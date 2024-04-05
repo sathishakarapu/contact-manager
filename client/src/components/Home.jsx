@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import img from '../components/Images/dashboard.png';
 import img1 from '../components//Images/vector.png';
 import img2 from '../components/Images/group.png';
-import img3 from '../components/Images/search.png';
 import img4 from '../components/Images/profile.png';
 import Contacts from './Contacts';
 
@@ -153,30 +152,7 @@ const Total = styled.div`
     white-space: nowrap;
     position: absolute;
 `
-const SearchInput = styled.img`
-    width: 17.49px;
-    height: 17.49px;
-    top: 40px;
-    left: 680px;
-    color: #000000;
-    position: absolute;
-`
-const Input = styled.input`
-    width: 458px;
-    height: 50px;
-    top: 24px;
-    left: 654px;
-    border-radius: 6px;
-    position: absolute;
-    background: #F2F2F2;
-    padding-left: 64px;
-    font-family: Titillium Web,sans-serif;
-    font-size: 18px;
-    font-weight: 400;
-    line-height: 27.38px;
-    text-align: left;
-    border: none;
-`
+
 const Profile = styled.img`
     width: 44px;
     height: 44px;
@@ -237,9 +213,8 @@ const Home = () => {
 
     const [user, setUser] = useState();
     const navigate = useNavigate();
-    // const [modalIsOpen, setModalIsOpen] = useState(false);
 
-
+    // verify the user and get the name by email id
     useEffect(() => {
         const token = getCookie('token');
     
@@ -266,6 +241,7 @@ const Home = () => {
         }
     }, [navigate]);
 
+    // logout function to remove the token and send back to home page
     const handleLogout = () => {
         // Clear authentication token and log out
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -298,8 +274,6 @@ const Home = () => {
         </SideBar>
         <NavBar>
             <Total>Total Contacts</Total>
-            <Input placeholder='Search by Email Id.....'/>
-            <SearchInput src={img3} alt='search' />
             <Profile src={img4} alt='profile'/>
             <Name>{user}</Name>
             <SubName>Super Admin</SubName>

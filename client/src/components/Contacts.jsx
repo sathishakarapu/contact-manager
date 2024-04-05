@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import EditContacts from './EditContacts';
 import editContact from '../components/Images/edit.png';
 import deleteContact from '../components/Images/deleteContact.png';
+import img3 from '../components/Images/search.png';
 import img6 from '../components/Images/filter.png';
 import img7 from '../components/Images/delete.png';
 import img8 from '../components/Images/import.png';
@@ -23,7 +24,7 @@ const Th = styled.th`
 
 const Td = styled.td`
   padding: 10px;
-  background: #B2DFFF4F;
+  /* background: #B2DFFF4F; */
   border: 1px solid #ddd;
   text-align: center;
 `;
@@ -156,7 +157,37 @@ const Export = styled.button`
     background: #FFFFFF;
     cursor: pointer;
 `
+const SearchInput = styled.img`
+    width: 17.49px;
+    height: 17.49px;
+    top: 40px;
+    left: 445px;
+    color: #000000;
+    position: absolute;
+`
+const Input = styled.input`
+    width: 450px;
+    height: 50px;
+    top: 24px;
+    left: 415px;
+    border-radius: 6px;
+    position: absolute;
+    background: #F2F2F2;
+    padding-left: 64px;
+    font-family: Titillium Web,sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    border: none;
+`
 
+const Tr = styled.tr`
+  &:nth-child(even) {
+    background: #B2DFFF;
+    color: #000;
+}
+`
 const Contacts = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingContactId, setEditingContactId] = useState(null);
@@ -165,10 +196,16 @@ const Contacts = () => {
 
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [token, setToken] = useState([]);
   const [error, setError] = useState(null);
 
+  // fetch all contacts function
   const fetchContacts = () => {
-    axios.get('http://localhost:8080/contacts')
+    const token = getCookie('token');
+    axios.get('http://localhost:8080/contacts', {
+      headers: {
+          Authorization: `Bearer ${token}`
+      }})
       .then(response => {
         setContacts(response.data);
       })
@@ -179,8 +216,16 @@ const Contacts = () => {
   };
 
   useEffect(() => {
+    const token = getCookie('token');
+    setToken(token);
     fetchContacts();
   }, []);
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+};
 
   const handleEdit = (contactId, initialData) => {
     setEditingContactId(contactId);
@@ -195,14 +240,7 @@ const Contacts = () => {
   const handleEditComplete = () => {
     setShowEditForm(false);
     setEditingContactId(null);
-    // Fetch contacts data again after editing a contact
-    axios.get('http://localhost:8080/contacts')
-      .then(response => {
-        setContacts(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching contacts:', error);
-      });
+    fetchContacts();
   };
 
   const handleDelete = async (id) => {
@@ -234,9 +272,12 @@ const Contacts = () => {
     }
   };
 
+  // immport the contacts through the csv file
   const handleFileUpload = (file) => {
     const formData = new FormData();
     formData.append('csvFile', file);
+    console.log(token)
+    formData.append('token', token)
 
     axios.post('http://localhost:8080/importContacts', formData)
       .then(response => {
@@ -251,13 +292,13 @@ const Contacts = () => {
       });
   };
 
+  // export the contacts as a csv file
   const handleExportContacts = async () => {
     // Display a confirmation dialog before exporting contacts
     const confirmed = window.confirm('Are you sure you want to export contacts?');
     
     // Check if user confirmed the action
     if (!confirmed) {
-        // User canceled the action
         return;
     }
     
@@ -289,10 +330,10 @@ const Contacts = () => {
         alert('Contacts exported successfully!');
     } catch (error) {
         console.error('Error exporting contacts:', error);
-        // Handle error
     }
   };
 
+  // delete the contacts which is selected
   const toggleSelectContact = (id) => {
     if (selectedContacts.includes(id)) {
       setSelectedContacts(selectedContacts.filter(contactId => contactId !== id));
@@ -326,7 +367,6 @@ const Contacts = () => {
     }
   };
   
-  // Add a function to close the delete confirmation modal
   const closeDeleteModal = () => {
     setDeleteModalIsOpen(false);
   };
@@ -343,6 +383,8 @@ const Contacts = () => {
         <Option value="country">By Country</Option>
       </Filter>
       <FilterLogo src={img6} alt='filter' />
+      <Input placeholder='Search by Email Id.....'/>
+      <SearchInput src={img3} alt='search' />
       <Delete onClick={deleteSelectedContacts}>Delete</Delete>
       {error && <div>Error: {error}</div>}
       <Import onClick={handleImportButtonClick}>Import</Import>
@@ -365,7 +407,7 @@ const Contacts = () => {
         </thead>
         <tbody>
           {contacts.map(contact => (
-            <tr key={contact._id}>
+            <Tr key={contact._id}>
               <Td style={{display:'flex'}}>
               <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
             checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
@@ -382,7 +424,7 @@ const Contacts = () => {
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleEdit(contact._id, contact)}><img alt='edit' src={editContact} /></button>
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleDelete(contact._id)}><img alt='delete' src={deleteContact} /></button>
               </Td>
-            </tr>
+            </Tr>
           ))}
         </tbody>
       </Table>

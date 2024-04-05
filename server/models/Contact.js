@@ -1,20 +1,5 @@
 const mongoose = require('mongoose');
 
-/**
- * Name (Required)-
-
-Designation (Required) - 
-
-Company (Required) - 
-
-Industry (Not Required)
-
-Email (Required)-
-
-Phone Number (Required)-
-
-Country (Required)
- */
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -45,6 +30,10 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  userId: {
+    type: String,
+    required: true
+  }
 });
 
 module.exports = mongoose.model('Contact', contactSchema);

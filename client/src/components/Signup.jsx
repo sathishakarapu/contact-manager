@@ -223,8 +223,6 @@ const Signup = () => {
             // Check if error message indicates existing user
             if (error.response && error.response.data && error.response.data.message === 'User already exists') {
                 toast.error('Username is already taken. Please choose a different one.');
-            } else {
-                toast.error('Failed to register. Please try again later.');
             }
         }        
     }

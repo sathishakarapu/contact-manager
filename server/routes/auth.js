@@ -6,7 +6,10 @@ const fs = require('fs');
 const multer = require('multer');
 const csv = require('csv-parser');
 const ContactsModel = require("../models/Contact");
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
+// signup page
 router.post("/signup", async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
@@ -48,10 +51,6 @@ router.post("/signup", async (req, res) => {
         // Save the user into the database
         const savedUser = await newUser.save();
 
-        // Automatically create empty contacts for the user
-        const newContacts = new ContactsModel({ user: savedUser._id });
-        await newContacts.save();
-
         res.status(201).json({ message: "User registered successfully", user: savedUser });
 
     } catch (error) {
@@ -60,6 +59,7 @@ router.post("/signup", async (req, res) => {
     }
 });
 
+// login page
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
@@ -100,6 +100,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// verify user in the home page
 router.get('/verifyUser', async (req, res) => {
     try {
         // Extract the token from the Authorization header
@@ -130,6 +131,7 @@ router.get('/verifyUser', async (req, res) => {
     }
 });
 
+// import the contacts
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Destination folder for storing uploaded files
@@ -141,20 +143,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 router.post('/importContacts', upload.single('csvFile'), (req, res) => {
     try {
+    
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
         const contacts = [];
-
+        const decodedToken = jwt.verify(req.body.token, process.env.JWT_SECRET);
         // Parse the CSV file
         fs.createReadStream(req.file.path)
             .pipe(csv())
             .on('data', (data) => {
-                // Customize this part to suit your data structure and database model
+                //table format
                 contacts.push({
                     name: data.Name,
                     designation: data.Designation,
@@ -162,7 +164,8 @@ router.post('/importContacts', upload.single('csvFile'), (req, res) => {
                     industry: data.Industry,
                     email: data.Email,
                     phone: data.PhoneNumber,
-                    country: data.Country
+                    country: data.Country,
+                    userId : decodedToken._id
                 });
             })
             .on('error', (error) => {
@@ -185,10 +188,15 @@ router.post('/importContacts', upload.single('csvFile'), (req, res) => {
     }
 });
 
+// get all the contats list
 router.get('/contacts', async (req, res) => {
     try {
+        const token = req.headers.authorization.split(" ")[1];
+        console.log(token);
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decodedToken);
         // Fetch contacts associated from the database
-        const contacts = await ContactsModel.find({});
+        const contacts = await ContactsModel.find({userId : decodedToken._id});
 
         // Send the contacts data as a response
         res.status(200).json(contacts);
@@ -198,9 +206,21 @@ router.get('/contacts', async (req, res) => {
     }
 });
 
+router.get('/contactById/:contactId', async (req, res) => {
+    try {
+        const contacts = await ContactsModel.findOne({_id : new ObjectId(req.params.contactId)});
+        // Send the contacts data as a response
+        res.status(200).json(contacts);
+    } catch (error) {
+        console.error('Error fetching contacts:', error);
+        res.status(500).json({ error: 'Error fetching contacts' });
+    }
+});
+
+// export the contacts
 router.get('/exportContacts', async (req, res) => {
     try {
-        // Retrieve contacts data from the database (assuming ContactsModel is your Mongoose model)
+        // Retrieve contacts data from the database
         const contacts = await ContactsModel.find();
 
         // Convert contacts data to CSV format (customize as per your data structure)
@@ -218,6 +238,7 @@ router.get('/exportContacts', async (req, res) => {
     }
 });
 
+// delete the contacts by id
 router.delete('/deleteContacts/:id', async (req, res) => {
     try {
         const deletedContact = await ContactsModel.findByIdAndDelete(req.params.id);

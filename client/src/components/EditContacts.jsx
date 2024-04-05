@@ -14,11 +14,11 @@ const EditContacts = ({ contactId, onComplete }) => {
 
   useEffect(() => {
     // Fetch the contact data from the backend using the contact ID
-    axios.get(`http://localhost:8080/contacts/${contactId}`)
+    axios.get(`http://localhost:8080/contactById/${contactId}`)
       .then(response => {
         // Destructure response data and set form data
-        const { name, designation, company, industry, email, phoneNumber, country } = response.data;
-        setFormData({ name, designation, company, industry, email, phoneNumber, country });
+        const { name, designation, company, industry, email, phone, country } = response.data;
+        setFormData({ name, designation, company, industry, email, phone, country });
       })
       .catch(error => {
         console.error('Error fetching contact:', error);
@@ -67,13 +67,13 @@ const EditContacts = ({ contactId, onComplete }) => {
       </div>
       <div>
         <label>Phone Number:</label>
-        <input type="number" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
+        <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
       </div>
       <div>
         <label>Country:</label>
         <input type="text" name="country" value={formData.country} onChange={handleChange} />
       </div>
-      <button type="submit" style={{cursor:'pointer',background:'transparent',border:'1px solid black'}}>Save Changes</button>
+      <button type="submit" style={{cursor:'pointer',marginLeft:'85px',color:'white',marginTop:'20px',background:'#2DA5FC',border:'1px solid black',borderRadius:'15px',padding:'10px'}}>Save Changes</button>
     </form>
   );
 };
