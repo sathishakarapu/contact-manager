@@ -2,8 +2,6 @@ import { React, useState } from 'react';
 import styled from 'styled-components';
 import img from '../components/Images/shape.png';
 import { Link, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 
@@ -201,18 +199,26 @@ const T2 = styled.div`
     position: absolute;
     white-space: nowrap;
 `
+const Message = styled.div`
+    position: absolute;
+    top: 880px;
+    left: 750px;
+    color: red;
+    font-size: 24px;
+`
 
 const Login = () => {
 
     const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [message,setMessage] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         if (!email || !password) {
-            toast.error("Please enter all the required fields!");
+            setMessage('Please enter all the required fields!')
             return;
         }
 
@@ -234,14 +240,13 @@ const Login = () => {
             }
         } catch (error) {
             console.error("Error:", error.message);
-            toast.error("User not Found!");
+            setMessage('User not found !');
         }
     }
 
 
     return (
         <>
-            <ToastContainer autoClose={2000} />
             <Container>
                 <Background>
                     <Ellipse1 />
@@ -276,7 +281,7 @@ const Login = () => {
                         <Rectangle />
                         <T1 type='submit' value='login'>Sign In</T1>
                     </form>
-
+                        <Message>{message}</Message>
                     <T2>Dont, have an account ? <Link to="/signup" style={{ color: '#7D8CC4' }}>Sign Up</Link></T2>
                 </Background>
             </Container>

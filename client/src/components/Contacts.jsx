@@ -289,6 +289,7 @@ const Contacts = () => {
         alert('Error importing contacts');
       });
   };
+  
   // export the contacts as a csv file
   const handleExportContacts = async () => {
     //confirmation dialog

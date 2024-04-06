@@ -258,7 +258,7 @@ router.delete('/deleteContacts/:id', async (req, res) => {
 });
 
 
-// search contacts by email Id
+// search contacts by email
 router.get('/searchContactsByEmailId', async (req, res) => {
     const { email } = req.query;
     const token = req.headers.authorization.split(" ")[1];
