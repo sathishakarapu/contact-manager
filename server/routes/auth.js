@@ -258,17 +258,4 @@ router.delete('/deleteContacts/:id', async (req, res) => {
 });
 
 
-// search contacts by email
-router.get('/searchContactsByEmailId', async (req, res) => {
-    const { email } = req.query;
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    try {
-      const contacts = await ContactsModel.find({ userId : decodedToken._id, email: { $regex: new RegExp(email, 'i') } });
-      res.status(200).json(contacts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-});
-
 module.exports = router;

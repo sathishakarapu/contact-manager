@@ -369,40 +369,6 @@ const Contacts = () => {
     setDeleteModalIsOpen(false);
   };
 
-  // search by email Id...
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-
-  const searchContacts = () => {
-    const token = getCookie('token');
-    axios.get(`http://localhost:8080/searchContactsByEmailId?email=${encodeURIComponent(searchQuery)}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(response => {
-      setSearchResults(response.data);
-    })
-    .catch(error => {
-      console.error('Error searching contacts:', error);
-      setError(error.message || 'An error occurred while searching contacts');
-    });
-  };
-
-  useEffect(() => {
-    const token = getCookie('token');
-    fetchContacts(token);
-  }, []);
-
-  const handleSearch = () => {
-    if (searchQuery.trim() !== '') {
-      searchContacts();
-    } else {
-      // If search query is empty, fetch all contacts
-      fetchContacts();
-    }
-  };
-
   return (
     <div>
       <SelectDate type="date" placeholder='Select Date'></SelectDate>
@@ -415,11 +381,7 @@ const Contacts = () => {
         <Option value="country">By Country</Option>
       </Filter>
       <FilterLogo src={img6} alt='filter' />
-      <Input placeholder='Search by Email Id.....' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyPress={(e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  }}/>
+      <Input placeholder='Search by Email Id.....' />
       <SearchInput src={img3} alt='search'/>
       <Delete onClick={deleteSelectedContacts}>Delete</Delete>
       {error && <div>Error: {error}</div>}
@@ -442,53 +404,6 @@ const Contacts = () => {
           </tr>
         </thead>
         <tbody>
-          {/* for search */}
-        {searchResults.length > 0 ? (
-            // If searchResults has data, render searchResults
-            searchResults.map(contact => (
-              <Tr key={contact._id}>
-                <Td style={{display:'flex'}}>
-              <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
-            checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
-            />
-                {contact.name}
-              </Td>
-          <Td>{contact.designation}</Td>
-          <Td>{contact.company}</Td>
-          <Td>{contact.industry}</Td>
-          <Td>{contact.email}</Td>
-          <Td>{contact.phone}</Td>
-          <Td>{contact.country}</Td>
-          <Td>
-                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleEdit(contact._id, contact)}><img alt='edit' src={editContact} /></button>
-                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleDelete(contact._id)}><img alt='delete' src={deleteContact} /></button>
-              </Td>
-              </Tr>
-            ))
-          ) : (
-            // If searchResults is empty, render contacts
-            contacts.map(contact => (
-              <Tr key={contact._id}>
-                <Td style={{display:'flex'}}>
-              <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
-            checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
-            />
-                {contact.name}
-              </Td>
-          <Td>{contact.designation}</Td>
-          <Td>{contact.company}</Td>
-          <Td>{contact.industry}</Td>
-          <Td>{contact.email}</Td>
-          <Td>{contact.phone}</Td>
-          <Td>{contact.country}</Td>
-          <Td>
-                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleEdit(contact._id, contact)}><img alt='edit' src={editContact} /></button>
-                <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleDelete(contact._id)}><img alt='delete' src={deleteContact} /></button>
-              </Td>
-              </Tr>
-            ))
-          )}
-          {/* up to here ! */}
           {contacts.map(contact => (
             <Tr key={contact._id}>
               <Td style={{display:'flex'}}>
