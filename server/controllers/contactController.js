@@ -46,14 +46,14 @@ exports.updateContact = async (req, res) => {
   }
 };
 
-// Search a contact by string
-exports.searchContactsByName = async (req, res) => {
-    const { name } = req.query;
+// // Search a contact by string
+// exports.searchContactsByName = async (req, res) => {
+//     const { name } = req.query;
   
-    try {
-      const contacts = await Contact.find({ name: { $regex: new RegExp(name, 'i') } });
-      res.status(200).json(contacts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  };
+//     try {
+//       const contacts = await Contact.find({ name: { $regex: new RegExp(name, 'i') } });
+//       res.status(200).json(contacts);
+//     } catch (err) {
+//       res.status(500).json({ message: err.message });
+//     }
+//   };

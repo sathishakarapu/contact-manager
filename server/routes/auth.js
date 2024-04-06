@@ -131,7 +131,8 @@ router.get('/verifyUser', async (req, res) => {
     }
 });
 
-// import the contacts
+
+// import contacts...every user have their own account !
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Destination folder for storing uploaded files
@@ -142,46 +143,52 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-router.post('/importContacts', upload.single('csvFile'), (req, res) => {
+router.post('/importContacts', upload.single('csvFile'), async (req, res) => {
     try {
-    
         if (!req.file) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        const contacts = [];
         const decodedToken = jwt.verify(req.body.token, process.env.JWT_SECRET);
+        const contacts = [];
+
         // Parse the CSV file
-        fs.createReadStream(req.file.path)
-            .pipe(csv())
-            .on('data', (data) => {
-                //table format
-                contacts.push({
-                    name: data.Name,
-                    designation: data.Designation,
-                    company: data.Company,
-                    industry: data.Industry,
-                    email: data.Email,
-                    phone: data.PhoneNumber,
-                    country: data.Country,
-                    userId : decodedToken._id
+        await new Promise((resolve, reject) => {
+            fs.createReadStream(req.file.path)
+                .pipe(csv())
+                .on('data', (data) => {
+                    contacts.push({
+                        name: data.Name,
+                        designation: data.Designation,
+                        company: data.Company,
+                        industry: data.Industry,
+                        email: data.Email,
+                        phone: data.PhoneNumber,
+                        country: data.Country,
+                        userId : decodedToken._id
+                    });
+                })
+                .on('error', (error) => {
+                    console.error('Error parsing CSV:', error);
+                    reject(error);
+                })
+                .on('end', () => {
+                    resolve();
                 });
-            })
-            .on('error', (error) => {
-                console.error('Error parsing CSV:', error);
-                res.status(500).json({ error: 'Error parsing CSV file' });
-            })
-            .on('end', async () => {
-                try {
-                    // Insert contacts into the database
-                    const insertedContacts = await ContactsModel.insertMany(contacts);
-                    res.status(200).json({ message: 'Contacts imported successfully', contacts: insertedContacts });
-                } catch (error) {
-                    console.error('Error inserting contacts into database:', error);
-                    res.status(500).json({ error: 'Error importing contacts' });
-                }
-            });
+        });
+
+        // Update or insert contacts into the database
+        const bulkOps = contacts.map(contact => ({
+            updateOne: {
+                filter: { email: contact.email },
+                update: { $set: contact },
+                upsert: true // Insert new documents if email not found
+            }
+        }));
+
+        const result = await ContactsModel.bulkWrite(bulkOps);
+
+        res.status(200).json({ message: 'Contacts imported successfully', result });
     } catch (error) {
         console.error('Error importing contacts:', error);
         res.status(500).json({ error: 'Error importing contacts' });
@@ -192,9 +199,7 @@ router.post('/importContacts', upload.single('csvFile'), (req, res) => {
 router.get('/contacts', async (req, res) => {
     try {
         const token = req.headers.authorization.split(" ")[1];
-        console.log(token);
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decodedToken);
         // Fetch contacts associated from the database
         const contacts = await ContactsModel.find({userId : decodedToken._id});
 
@@ -206,6 +211,7 @@ router.get('/contacts', async (req, res) => {
     }
 });
 
+// get the contcats By Id
 router.get('/contactById/:contactId', async (req, res) => {
     try {
         const contacts = await ContactsModel.findOne({_id : new ObjectId(req.params.contactId)});
@@ -238,7 +244,7 @@ router.get('/exportContacts', async (req, res) => {
     }
 });
 
-// delete the contacts by id
+// delete the contacts by Id
 router.delete('/deleteContacts/:id', async (req, res) => {
     try {
         const deletedContact = await ContactsModel.findByIdAndDelete(req.params.id);
@@ -248,6 +254,20 @@ router.delete('/deleteContacts/:id', async (req, res) => {
         res.status(200).json({ message: 'Contact deleted successfully' });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});
+
+
+// search contacts by email Id
+router.get('/searchContactsByEmailId', async (req, res) => {
+    const { email } = req.query;
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    try {
+      const contacts = await ContactsModel.find({ userId : decodedToken._id, email: { $regex: new RegExp(email, 'i') } });
+      res.status(200).json(contacts);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
 });
 

@@ -8,7 +8,6 @@ const contactSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
   },
   phone: {
     type: String,
@@ -24,11 +23,11 @@ const contactSchema = new mongoose.Schema({
   },
   industry: {
     type: String,
-    required: false
+    required: true
   },
   country: {
     type: String,
-    required: false
+    required: true
   },
   userId: {
     type: String,
