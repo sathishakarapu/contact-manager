@@ -187,6 +187,34 @@ const Tr = styled.tr`
     color: #000;
 }
 `
+
+const Tooltip = styled.span`
+  position: relative;
+  display: inline-block;
+  &:hover::after {
+    content: "${props => props.text}";
+    position: absolute;
+    background-color: #FFFFFF;
+    color: #2DA5FC;
+    padding: 5px;
+    border-radius: 5px;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+`;
+
+
+const EmailToolTip = ({ email }) => {
+  return (
+    <Tooltip text={email}>
+      {email}
+    </Tooltip>
+  );
+};
+
+
 const Contacts = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingContactId, setEditingContactId] = useState(null);
@@ -197,6 +225,8 @@ const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [token, setToken] = useState([]);
   const [error, setError] = useState(null);
+
+  
 
   // fetch all contacts function
   const fetchContacts = () => {
@@ -369,6 +399,66 @@ const Contacts = () => {
     setDeleteModalIsOpen(false);
   };
 
+  // search by email Id...
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  
+  const filterContacts = () => {
+    if (searchQuery.trim() === '') {
+      // If search query is empty, display all contacts
+      setSearchResults(contacts);
+    } else {
+      // Filter contacts based on search query
+      setSearchResults(
+        contacts.filter(contact =>
+          [contact.name, contact.designation, contact.email, contact.company].some(field =>
+            field.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        )
+      );
+    }
+  };
+
+   // Handle search input change
+   const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    filterContacts();
+  }, [searchQuery, contacts]);
+
+
+  // const searchContacts = () => {
+  //   const token = getCookie('token');
+  //   axios.get(`http://localhost:8080/searchContactsByEmailId?email=${encodeURIComponent(searchQuery)}`, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     }
+  //   })
+  //   .then(response => {
+  //     setSearchResults(response.data);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error searching contacts:', error);
+  //     setError(error.message || 'An error occurred while searching contacts');
+  //   });
+  // };
+
+  useEffect(() => {
+    const token = getCookie('token');
+    fetchContacts(token);
+  }, []);
+
+  // const handleSearch = () => {
+  //   if (searchQuery.trim() !== '') {
+  //     searchContacts();
+  //   } else {
+  //     // If search query is empty, fetch all contacts
+  //     fetchContacts();
+  //   }
+  // };
+
   return (
     <div>
       <SelectDate type="date" placeholder='Select Date'></SelectDate>
@@ -381,7 +471,7 @@ const Contacts = () => {
         <Option value="country">By Country</Option>
       </Filter>
       <FilterLogo src={img6} alt='filter' />
-      <Input placeholder='Search by Email Id.....' />
+      <Input placeholder='Search...' value={searchQuery} onChange={handleSearchInputChange} />
       <SearchInput src={img3} alt='search'/>
       <Delete onClick={deleteSelectedContacts}>Delete</Delete>
       {error && <div>Error: {error}</div>}
@@ -404,20 +494,18 @@ const Contacts = () => {
           </tr>
         </thead>
         <tbody>
-          {contacts.map(contact => (
+   {searchResults.map(contact => (
             <Tr key={contact._id}>
-              <Td style={{display:'flex'}}>
-              <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
-            checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
-            />
-                {contact.name}
-              </Td>
+              {/* Render each contact */}
+              {/* Render each field of the contact */}
+              <Td>{contact.name}</Td>
               <Td>{contact.designation}</Td>
               <Td>{contact.company}</Td>
               <Td>{contact.industry}</Td>
-              <Td>{contact.email}</Td>
+              <Td><EmailToolTip email={contact.email} /></Td>
               <Td>{contact.phone}</Td>
               <Td>{contact.country}</Td>
+              {/* Render actions buttons */}
               <Td>
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleEdit(contact._id, contact)}><img alt='edit' src={editContact} /></button>
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleDelete(contact._id)}><img alt='delete' src={deleteContact} /></button>
