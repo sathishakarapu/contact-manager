@@ -45,28 +45,3 @@ exports.updateContact = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
-
-// Delete a contact by ID
-exports.deleteContact = async (req, res) => {
-  try {
-    const deletedContact = await Contact.findByIdAndDelete(req.params.id);
-    if (!deletedContact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-    res.status(200).json({ message: 'Contact deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// Search a contact by string
-exports.searchContactsByName = async (req, res) => {
-    const { name } = req.query;
-  
-    try {
-      const contacts = await Contact.find({ name: { $regex: new RegExp(name, 'i') } });
-      res.status(200).json(contacts);
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  };

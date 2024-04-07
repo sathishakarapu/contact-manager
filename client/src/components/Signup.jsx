@@ -1,8 +1,6 @@
 import {React, useState} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import { ToastContainer,toast} from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 const Container = styled.div`
@@ -179,12 +177,21 @@ const Bt = styled.p`
     position: absolute;
 `;
 
+const Message = styled.div`
+    font-size: 20px;
+    margin-top: 10px;
+    top: 780px;
+    left: 700px;
+    position: absolute;
+`
+
 const Signup = () => {
 
     const navigate = useNavigate();
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
+    const [message,setMessage] = useState();
         
     // Handle form submission here, e.g., send data to the server
     const handleSubmit = async (event) => {
@@ -192,13 +199,13 @@ const Signup = () => {
         
         // Validation for empty inputs
         if (!email || !password || !confirmPassword) {
-            toast.error('Please fill in all fields.');
+            setMessage('please fill in all fields');
             return;
         }
 
         // Validation for password match
         if (password !== confirmPassword) {
-            toast.error('Passwords do not match.');
+            setMessage('passwords do not match');
             return;
         }
         
@@ -212,26 +219,24 @@ const Signup = () => {
             // If the request is successful (status code 2xx)
             if (response.status >= 200 && response.status < 300) {
                 console.log('Signup successful');
-                toast('Successfully signed up!');
+                setMessage('Successfully signed up');
                 navigate('/login'); // Redirect to the login page
             } else {
-                // If the request is not successful (status code is not 2xx)
+                // If the request is not successful
                 throw new Error('Signup failed with status code ' + response.status);
             }
         } catch (error) {
             console.error('Error:', error.message);
             // Check if error message indicates existing user
+            setMessage('Username is already taken. Please choose a different one.')
             if (error.response && error.response.data && error.response.data.message === 'User already exists') {
-                toast.error('Username is already taken. Please choose a different one.');
-            } else {
-                toast.error('Failed to register. Please try again later.');
+                setMessage('Username is already taken. Please choose a different one.')
             }
         }        
     }
 
     return (
       <>
-      <ToastContainer autoClose={2000}/>
         <Container>
             <Background>
                 <Ellipse1/>
@@ -268,6 +273,7 @@ const Signup = () => {
                         <B1 style={{textDecoration:'none',color:'#FFFFFF'}} 
                         type='submit'>Sign up</B1>
                     </form>
+                    <Message style={{color:'red',position:'absolute'}}>{message}</Message>
                         
                     <Bt>Already have an account ?<Link to='/login'>login</Link></Bt>
             </Background>
