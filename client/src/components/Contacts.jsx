@@ -496,16 +496,19 @@ const Contacts = () => {
         <tbody>
    {searchResults.map(contact => (
             <Tr key={contact._id}>
-              {/* Render each contact */}
-              {/* Render each field of the contact */}
-              <Td>{contact.name}</Td>
+
+<Td style={{display:'flex'}}>
+              <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
+            checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
+            />
+                {contact.name}
+              </Td>
               <Td>{contact.designation}</Td>
               <Td>{contact.company}</Td>
               <Td>{contact.industry}</Td>
               <Td><EmailToolTip email={contact.email} /></Td>
               <Td>{contact.phone}</Td>
               <Td>{contact.country}</Td>
-              {/* Render actions buttons */}
               <Td>
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleEdit(contact._id, contact)}><img alt='edit' src={editContact} /></button>
                 <button style={{ background: 'transparent', border: 'none', cursor: 'pointer' }} onClick={() => handleDelete(contact._id)}><img alt='delete' src={deleteContact} /></button>
