@@ -187,6 +187,34 @@ const Tr = styled.tr`
     color: #000;
 }
 `
+
+const Tooltip = styled.span`
+  position: relative;
+  display: inline-block;
+  &:hover::after {
+    content: "${props => props.text}";
+    position: absolute;
+    background-color: #FFFFFF;
+    color: #2DA5FC;
+    padding: 5px;
+    border-radius: 5px;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+`;
+
+
+const EmailToolTip = ({ email }) => {
+  return (
+    <Tooltip text={email}>
+      {email}
+    </Tooltip>
+  );
+};
+
+
 const Contacts = () => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingContactId, setEditingContactId] = useState(null);
@@ -474,7 +502,7 @@ const Contacts = () => {
               <Td>{contact.designation}</Td>
               <Td>{contact.company}</Td>
               <Td>{contact.industry}</Td>
-              <Td>{contact.email}</Td>
+              <Td><EmailToolTip email={contact.email} /></Td>
               <Td>{contact.phone}</Td>
               <Td>{contact.country}</Td>
               {/* Render actions buttons */}
