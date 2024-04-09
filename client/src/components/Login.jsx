@@ -1,6 +1,5 @@
 import { React, useState } from 'react';
 import styled from 'styled-components';
-import img from '../components/Images/shape.png';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -132,7 +131,7 @@ const Input1 = styled.input`
 `
 
 const Input2 = styled.input`
-    width: 428px;
+    width: 410px;
     height: 54px;
     top: 604px;
     left: 639px;
@@ -141,17 +140,8 @@ const Input2 = styled.input`
     position: absolute;
     border: 1px solid #E2E2E2;
     padding-left: 20px;
+    padding-right: 20px;
 `
-
-const Shape = styled.img`
-    width: 20px;
-    height: 14.29px;
-    top: 624px;
-    left: 1049px;
-    position: absolute;
-    color: #C5C5C5;
-    cursor: pointer;
-`;
 
 const Rectangle = styled.div`
     width: 452px;
@@ -218,7 +208,7 @@ const Login = () => {
         event.preventDefault();
 
         if (!email || !password) {
-            setMessage('Please enter all the required fields!')
+            setMessage('Please enter all the required fields !')
             return;
         }
 
@@ -240,7 +230,7 @@ const Login = () => {
             }
         } catch (error) {
             console.error("Error:", error.message);
-            setMessage('User not found !');
+            setMessage('Username or password doesnot matched !');
         }
     }
 
@@ -269,15 +259,14 @@ const Login = () => {
                         Enter your credentials to access your account
                     </Text>
                     <form onSubmit={handleSubmit}>
-                        <Input1 placeholder='User ID' required
+                        <Input1 placeholder='User ID'
                             type='email' value={email}
                             name='email' onChange={(e) => setEmail(e.target.value)}
                         />
-                        <Input2 placeholder='Password' required
+                        <Input2 placeholder='Password'
                             value={password}
                             name='password' type='password' onChange={(e) => setPassword(e.target.value)}
                         />
-                        <Shape src={img} alt='shape' />
                         <Rectangle />
                         <T1 type='submit' value='login'>Sign In</T1>
                     </form>

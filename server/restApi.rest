@@ -1,9 +1,0 @@
-
-
-POST  http://localhost:8080/api/register
-
-{
-    "email":"anusha@gmail.com",
-    "password":"12345678",
-    "confirmPassword":"12345678"
-}

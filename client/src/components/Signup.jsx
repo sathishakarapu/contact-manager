@@ -191,7 +191,7 @@ const Signup = () => {
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [confirmPassword,setConfirmPassword] = useState('');
-    const [message,setMessage] = useState();
+    const [message,setMessage] = useState('');
         
     // Handle form submission here, e.g., send data to the server
     const handleSubmit = async (event) => {
@@ -199,13 +199,13 @@ const Signup = () => {
         
         // Validation for empty inputs
         if (!email || !password || !confirmPassword) {
-            setMessage('please fill in all fields');
+            setMessage('Please enter all the required fields !');
             return;
         }
 
         // Validation for password match
         if (password !== confirmPassword) {
-            setMessage('passwords do not match');
+            setMessage('passwords do not match !');
             return;
         }
         
@@ -230,7 +230,7 @@ const Signup = () => {
             // Check if error message indicates existing user
             setMessage('Username is already taken. Please choose a different one.')
             if (error.response && error.response.data && error.response.data.message === 'User already exists') {
-                setMessage('Username is already taken. Please choose a different one.')
+                setMessage('Username is already taken. Please choose a different one !')
             }
         }        
     }
@@ -259,15 +259,15 @@ const Signup = () => {
                     </Text>
                     <form onSubmit={handleSubmit}>
                         <Input1 placeholder='Mail ID' type='email' 
-                        required value={email} name='email'  autoComplete='off'
+                        value={email} name='email'  autoComplete='off'
                         onChange={(e) => setEmail(e.target.value)}/>
 
                         <Input2 placeholder='Password' type='password' 
-                        required value={password} name='password' autoComplete='off'
+                        value={password} name='password' autoComplete='off'
                         onChange={(e) => setPassword(e.target.value)}/>
 
                         <Input3 placeholder='Confirm Password' type='password' autoComplete='off'
-                        required value={confirmPassword} name='confirmPassword' 
+                        value={confirmPassword} name='confirmPassword' 
                         onChange={(e) => setConfirmPassword(e.target.value)}/>
 
                         <B1 style={{textDecoration:'none',color:'#FFFFFF'}} 

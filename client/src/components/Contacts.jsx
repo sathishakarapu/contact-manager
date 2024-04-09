@@ -220,12 +220,14 @@ const Contacts = () => {
   const [editingContactId, setEditingContactId] = useState(null);
   const [editingContactData, setEditingContactData] = useState(null);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
-
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedContacts, setSelectedContacts] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [token, setToken] = useState([]);
   const [error, setError] = useState(null);
-
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   
 
   // fetch all contacts function
@@ -254,7 +256,7 @@ const Contacts = () => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
-};
+  };
 
   const handleEdit = (contactId, initialData) => {
     setEditingContactId(contactId);
@@ -281,8 +283,6 @@ const Contacts = () => {
       setError(error.message || 'An error occurred while deleting contact');
     }
   };
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const handleImportButtonClick = () => {
     setModalIsOpen(true);
@@ -370,8 +370,6 @@ const Contacts = () => {
     }
   };
 
-  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-
   const deleteSelectedContacts = () => {
     setDeleteModalIsOpen(true);
   };
@@ -391,7 +389,6 @@ const Contacts = () => {
       alert("Contacts deleted Successfully.")
     } catch (error) {
       console.error('Error deleting contacts:', error);
-      // Handle error
     }
   };
   
@@ -399,10 +396,7 @@ const Contacts = () => {
     setDeleteModalIsOpen(false);
   };
 
-  // search by email Id...
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
-  
+  // search by query...
   const filterContacts = () => {
     if (searchQuery.trim() === '') {
       // If search query is empty, display all contacts
@@ -411,7 +405,7 @@ const Contacts = () => {
       // Filter contacts based on search query
       setSearchResults(
         contacts.filter(contact =>
-          [contact.name, contact.designation, contact.email, contact.company].some(field =>
+          [contact.name, contact.designation, contact.email, contact.company,contact.industry,contact.country].some(field =>
             field.toLowerCase().includes(searchQuery.toLowerCase())
           )
         )
@@ -429,35 +423,11 @@ const Contacts = () => {
   }, [searchQuery, contacts]);
 
 
-  // const searchContacts = () => {
-  //   const token = getCookie('token');
-  //   axios.get(`http://localhost:8080/searchContactsByEmailId?email=${encodeURIComponent(searchQuery)}`, {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`
-  //     }
-  //   })
-  //   .then(response => {
-  //     setSearchResults(response.data);
-  //   })
-  //   .catch(error => {
-  //     console.error('Error searching contacts:', error);
-  //     setError(error.message || 'An error occurred while searching contacts');
-  //   });
-  // };
-
   useEffect(() => {
     const token = getCookie('token');
     fetchContacts(token);
   }, []);
 
-  // const handleSearch = () => {
-  //   if (searchQuery.trim() !== '') {
-  //     searchContacts();
-  //   } else {
-  //     // If search query is empty, fetch all contacts
-  //     fetchContacts();
-  //   }
-  // };
 
   return (
     <div>
@@ -493,20 +463,18 @@ const Contacts = () => {
             <Th>Actions</Th>
           </tr>
         </thead>
-        <tbody>
-   {searchResults.map(contact => (
+        <tbody style={{cursor:'default'}}>
+        {searchResults.map(contact => (
             <Tr key={contact._id}>
-
-<Td style={{display:'flex'}}>
+            <Td style={{display:'flex'}}>
               <input type="checkbox" style={{marginRight:'20px',cursor:'pointer'}}
-            checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)}
-            />
-                {contact.name}
-              </Td>
-              <Td>{contact.designation}</Td>
+              checked={selectedContacts.includes(contact._id)} onChange={() => toggleSelectContact(contact._id)} />
+              {contact.name}</Td>
+              <Td>{contact.designation}
+            </Td>
               <Td>{contact.company}</Td>
               <Td>{contact.industry}</Td>
-              <Td><EmailToolTip email={contact.email} /></Td>
+              <Td style={{cursor:'pointer'}}><EmailToolTip email={contact.email} /></Td>
               <Td>{contact.phone}</Td>
               <Td>{contact.country}</Td>
               <Td>
