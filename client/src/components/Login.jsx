@@ -2,7 +2,7 @@ import { React, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
 
 
 const Container = styled.div`

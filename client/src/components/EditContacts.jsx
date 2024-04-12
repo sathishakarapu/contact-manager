@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
 
 const EditContacts = ({ contactId, onComplete }) => {
   const [formData, setFormData] = useState({
@@ -14,7 +15,7 @@ const EditContacts = ({ contactId, onComplete }) => {
 
   useEffect(() => {
     // Fetch the contact data from the backend using the contact ID
-    axios.get(`http://localhost:8080/contactById/${contactId}`)
+    axios.get(apiUrl + `/contactById/${contactId}`)
       .then(response => {
         // Destructure response data and set form data
         const { name, designation, company, industry, email, phone, country } = response.data;
@@ -33,7 +34,7 @@ const EditContacts = ({ contactId, onComplete }) => {
     e.preventDefault();
     try {
       // Send a PUT request to update the contact
-      await axios.put(`http://localhost:8080/contacts/${contactId}`, formData);
+      await axios.put(apiUrl + `/contacts/${contactId}`, formData);
 
       // Notify the parent component that editing is complete
       onComplete();

@@ -10,7 +10,7 @@ import img6 from '../components/Images/filter.png';
 import img7 from '../components/Images/delete.png';
 import img8 from '../components/Images/import.png';
 import img9 from '../components/Images/export.png';
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = "https://contact-manager-db17a144bd77.herokuapp.com";
 
 
 const Table = styled.table`
