@@ -10,6 +10,8 @@ import img6 from '../components/Images/filter.png';
 import img7 from '../components/Images/delete.png';
 import img8 from '../components/Images/import.png';
 import img9 from '../components/Images/export.png';
+const apiUrl = process.env.REACT_APP_API_URL;
+
 
 const Table = styled.table`
   width: 100%;
@@ -233,7 +235,7 @@ const Contacts = () => {
   // fetch all contacts function
   const fetchContacts = () => {
     const token = getCookie('token');
-    axios.get('http://localhost:8080/contacts', {
+    axios.get(apiUrl +'/contacts', {
       headers: {
           Authorization: `Bearer ${token}`
       }})
@@ -276,7 +278,7 @@ const Contacts = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/deleteContacts/${id}`);
+      await axios.delete(apiUrl+`/deleteContacts/${id}`);
       setContacts(prevContacts => prevContacts.filter(contact => contact._id !== id));
     } catch (error) {
       console.error('Error deleting contact:', error);
@@ -307,7 +309,7 @@ const Contacts = () => {
     formData.append('csvFile', file);
     formData.append('token', token);
   
-    axios.post('http://localhost:8080/importContacts', formData)
+    axios.post(apiUrl+'/importContacts', formData)
       .then(response => {
         console.log(response.data);
         alert('Contacts imported successfully');
@@ -331,7 +333,7 @@ const Contacts = () => {
     }
     
     try {
-        const response = await axios.get('http://localhost:8080/exportContacts', {
+        const response = await axios.get(apiUrl+'/exportContacts', {
             responseType: 'blob' // Important to receive file as blob
         });
 
@@ -377,7 +379,7 @@ const Contacts = () => {
   const confirmDeleteContacts = async () => {
     try {
       // Map selected contact IDs to an array of delete requests
-      const deleteRequests = selectedContacts.map(id => axios.delete(`http://localhost:8080/deleteContacts/${id}`));
+      const deleteRequests = selectedContacts.map(id => axios.delete(apiUrl+`/deleteContacts/${id}`));
       
       // Send all delete requests concurrently
       await Promise.all(deleteRequests);

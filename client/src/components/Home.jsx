@@ -7,6 +7,7 @@ import img1 from '../components//Images/vector.png';
 import img2 from '../components/Images/group.png';
 import img4 from '../components/Images/profile.png';
 import Contacts from './Contacts';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Container = styled.div`
     width: 1728px;
@@ -221,7 +222,7 @@ const Home = () => {
         if (!token) {
             navigate('/login');
         } else {
-            axios.get("http://localhost:8080/verifyUser", {
+            axios.get(apiUrl +"/verifyUser", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

@@ -2,6 +2,7 @@ import {React, useState} from 'react';
 import {Link,useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Container = styled.div`
     width:1728px;
@@ -210,7 +211,7 @@ const Signup = () => {
         }
         
         try {
-            const response = await axios.post('http://localhost:8080/signup', {
+            const response = await axios.post(apiUrl + '/signup', {
                 email: email,
                 password: password,
                 confirmPassword: confirmPassword
